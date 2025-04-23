@@ -1,0 +1,59 @@
+services:
+  # ---------------------------------------------------- zk-1
+  zk1:
+    image: zookeeper:3.9.3
+    hostname: zk1                      # ← internal DNS name
+    container_name: zk1
+    ports:
+      - "2181:2181"                    # host-side client port
+    environment:
+      ZOO_MY_ID: "1"
+
+      # tell the entrypoint how the **whole** ensemble looks
+      ZOO_SERVERS: |
+        server.1=zk1:2888:3888;2181
+        server.2=zk2:2888:3888;2181
+        server.3=zk3:2888:3888;2181
+
+      # enable the four-letter cmds you need
+      ZOO_4LW_COMMANDS_WHITELIST: ruok,stat,srvr
+
+      # silence the admin UI clash on 8080
+      ADMIN_SERVER_PORT: "0"
+
+  # ---------------------------------------------------- zk-2
+  zk2:
+    image: zookeeper:3.9.3
+    hostname: zk2
+    container_name: zk2
+    ports:
+      - "2182:2181"
+    environment:
+      ZOO_MY_ID: "2"
+      ZOO_SERVERS: |
+        server.1=zk1:2888:3888;2181
+        server.2=zk2:2888:3888;2181
+        server.3=zk3:2888:3888;2181
+      ZOO_4LW_COMMANDS_WHITELIST: ruok,stat,srvr
+      ADMIN_SERVER_PORT: "0"
+
+  # ---------------------------------------------------- zk-3
+  zk3:
+    image: zookeeper:3.9.3
+    hostname: zk3
+    container_name: zk3
+    ports:
+      - "2183:2181"
+    environment:
+      ZOO_MY_ID: "3"
+      ZOO_SERVERS: |
+        server.1=zk1:2888:3888;2181
+        server.2=zk2:2888:3888;2181
+        server.3=zk3:2888:3888;2181
+      ZOO_4LW_COMMANDS_WHITELIST: ruok,stat,srvr
+      ADMIN_SERVER_PORT: "0"
+
+volumes:
+  zk1-data:
+  zk2-data:
+  zk3-data:
