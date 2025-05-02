@@ -1,0 +1,64 @@
+---
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+ssl: false
+
+whitelistObjectNames:
+  - "org.apache.ZooKeeperService:*"
+  - "org.apache.zookeeper:*"
+  - "java.lang:*"
+
+blacklistObjectNames:
+  - "java.lang:type=Memory,*"
+
+rules:
+  # Special case for NodeCount with detailed context labels
+  - pattern: 'org.apache.ZooKeeperService<type=([^>]+)><>(NodeCount)'
+    name: zk_node_count
+    labels:
+      type: "$1"
+
+  # Add a cleaner syntax for connection count - capture for all nodes
+  - pattern: 'org.apache.ZooKeeperService<name0=ReplicatedServer_id([0-9]+), name1=replica.([0-9]+), name2=([^>]*)><>(NumAliveConnections)'
+    name: zk_num_alive_connections
+    labels:
+      server_id: "$1"
+      replica: "$2"
+      state: "$3"
+
+  # Create a dedicated metric for server role
+  - pattern: 'org.apache.ZooKeeperService<name0=ReplicatedServer_id([0-9]+), name1=replica.([0-9]+)><>(Leader)'
+    name: zk_server_role
+    value: 1.0
+    labels:
+      server_id: "$1"
+      replica: "$2"
+      role: "leader"
+
+  # Add a special rule to create server role metrics for followers
+  - pattern: 'org.apache.ZooKeeperService<name0=ReplicatedServer_id([0-9]+), name1=replica.([0-9]+), name2=Follower><>([^:]+):?.*'
+    name: zk_server_role
+    value: 0.0
+    labels:
+      server_id: "$1"
+      replica: "$2"
+      role: "follower"
+  # Add a cleaner syntax for quorum size
+  - pattern: 'org.apache.ZooKeeperService<name0=ReplicatedServer_id([0-9]+)><>(QuorumSize)'
+    name: zk_quorum_size
+    labels:
+      server_id: "$1"
+
+  # General ZooKeeperService metrics (extract domain and attribute)
+  - pattern: 'org.apache.ZooKeeperService<([^>]+)><>([^:]+):?.*'
+    name: zk_$2
+    labels:
+      context: "$1"
+
+  # org.apache.zookeeper metrics (extract domain and attribute)
+  - pattern: 'org.apache.zookeeper<([^>]+)><>([^:]+)'
+    name: zk_$2
+    labels:
+      context: "$1"
+
+

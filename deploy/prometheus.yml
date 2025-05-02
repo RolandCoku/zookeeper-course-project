@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'zookeeper'
+    static_configs:
+      - targets:
+          - 'zk1:9404'
+          - 'zk2:9404'
+          - 'zk3:9404'
+          - 'zk4:9404'
+          - 'zk5:9404'

@@ -1,59 +1,161 @@
 services:
-  # ---------------------------------------------------- zk-1
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - zk1
+      - zk2
+      - zk3
+      - zk4
+      - zk5
+
   zk1:
     image: zookeeper:3.9.3
-    hostname: zk1                      # ← internal DNS name
+    hostname: zk1
     container_name: zk1
     ports:
-      - "2181:2181"                    # host-side client port
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+      - "9404:9404" # expose metrics for Prometheus
     environment:
+      JVMFLAGS: "-javaagent:/jmx_prometheus_javaagent.jar=9404:/etc/jmx_exporter/config.yml"
       ZOO_MY_ID: "1"
-
-      # tell the entrypoint how the **whole** ensemble looks
       ZOO_SERVERS: |
         server.1=zk1:2888:3888;2181
         server.2=zk2:2888:3888;2181
         server.3=zk3:2888:3888;2181
+        server.4=zk4:2888:3888;2181
+        server.5=zk5:2888:3888;2181
+    volumes:
+      - ./jmx_prometheus_javaagent-0.20.0.jar:/jmx_prometheus_javaagent.jar
+      - ./zookeeper.yml:/etc/jmx_exporter/config.yml
+      - zk1-data:/data
+      - zk1-datalog:/datalog
 
-      # enable the four-letter cmds you need
-      ZOO_4LW_COMMANDS_WHITELIST: ruok,stat,srvr
-
-      # silence the admin UI clash on 8080
-      ADMIN_SERVER_PORT: "0"
-
-  # ---------------------------------------------------- zk-2
   zk2:
     image: zookeeper:3.9.3
     hostname: zk2
     container_name: zk2
     ports:
       - "2182:2181"
+      - "2889:2888"
+      - "3889:3888"
+      - "9405:9404"
     environment:
+      JVMFLAGS: "-javaagent:/jmx_prometheus_javaagent.jar=9404:/etc/jmx_exporter/config.yml"
       ZOO_MY_ID: "2"
       ZOO_SERVERS: |
         server.1=zk1:2888:3888;2181
         server.2=zk2:2888:3888;2181
         server.3=zk3:2888:3888;2181
-      ZOO_4LW_COMMANDS_WHITELIST: ruok,stat,srvr
-      ADMIN_SERVER_PORT: "0"
+        server.4=zk4:2888:3888;2181
+        server.5=zk5:2888:3888;2181
+    volumes:
+      - ./jmx_prometheus_javaagent-0.20.0.jar:/jmx_prometheus_javaagent.jar
+      - ./zookeeper.yml:/etc/jmx_exporter/config.yml
+      - zk2-data:/data
+      - zk2-datalog:/datalog
 
-  # ---------------------------------------------------- zk-3
   zk3:
     image: zookeeper:3.9.3
     hostname: zk3
     container_name: zk3
     ports:
       - "2183:2181"
+      - "2890:2888"
+      - "3890:3888"
+      - "9406:9404"
     environment:
+      JVMFLAGS: "-javaagent:/jmx_prometheus_javaagent.jar=9404:/etc/jmx_exporter/config.yml"
       ZOO_MY_ID: "3"
       ZOO_SERVERS: |
         server.1=zk1:2888:3888;2181
         server.2=zk2:2888:3888;2181
         server.3=zk3:2888:3888;2181
-      ZOO_4LW_COMMANDS_WHITELIST: ruok,stat,srvr
-      ADMIN_SERVER_PORT: "0"
+        server.4=zk4:2888:3888;2181
+        server.5=zk5:2888:3888;2181
+    volumes:
+      - ./jmx_prometheus_javaagent-0.20.0.jar:/jmx_prometheus_javaagent.jar
+      - ./zookeeper.yml:/etc/jmx_exporter/config.yml
+      - zk3-data:/data
+      - zk3-datalog:/datalog
+
+  zk4:
+    image: zookeeper:3.9.3
+    hostname: zk4
+    container_name: zk4
+    ports:
+      - "2184:2181"
+      - "2891:2888"
+      - "3891:3888"
+      - "9407:9404"
+    environment:
+      JVMFLAGS: "-javaagent:/jmx_prometheus_javaagent.jar=9404:/etc/jmx_exporter/config.yml"
+      ZOO_MY_ID: "4"
+      ZOO_SERVERS: |
+        server.1=zk1:2888:3888;2181
+        server.2=zk2:2888:3888;2181
+        server.3=zk3:2888:3888;2181
+        server.4=zk4:2888:3888;2181
+        server.5=zk5:2888:3888;2181
+    volumes:
+      - ./jmx_prometheus_javaagent-0.20.0.jar:/jmx_prometheus_javaagent.jar
+      - ./zookeeper.yml:/etc/jmx_exporter/config.yml
+      - zk4-data:/data
+      - zk4-datalog:/datalog
+
+  zk5:
+    image: zookeeper:3.9.3
+    hostname: zk5
+    container_name: zk5
+    ports:
+      - "2185:2181"
+      - "2892:2888"
+      - "3892:3888"
+      - "9408:9404"
+    environment:
+      JVMFLAGS: "-javaagent:/jmx_prometheus_javaagent.jar=9404:/etc/jmx_exporter/config.yml"
+      ZOO_MY_ID: "5"
+      ZOO_SERVERS: |
+        server.1=zk1:2888:3888;2181
+        server.2=zk2:2888:3888;2181
+        server.3=zk3:2888:3888;2181
+        server.4=zk4:2888:3888;2181
+        server.5=zk5:2888:3888;2181
+    volumes:
+      - ./jmx_prometheus_javaagent-0.20.0.jar:/jmx_prometheus_javaagent.jar
+      - ./zookeeper.yml:/etc/jmx_exporter/config.yml
+      - zk5-data:/data
+      - zk5-datalog:/datalog
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+
 
 volumes:
   zk1-data:
+  zk1-datalog:
   zk2-data:
+  zk2-datalog:
   zk3-data:
+  zk3-datalog:
+  zk4-data:
+  zk4-datalog:
+  zk5-data:
+  zk5-datalog:
+  grafana-data:
