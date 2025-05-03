@@ -6,10 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="monitoring" />
+        <module name="group-messaging" />
         <module name="queue" />
         <module name="locking" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="monitoring" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

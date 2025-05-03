@@ -11,11 +11,10 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-
   <modules>
     <module>locking</module>
     <module>queue</module>
-    <module>monitoring</module>
+    <module>group-messaging</module>
   </modules>
 
   <dependencies>
