@@ -1,4 +1,4 @@
-package com.example.groupMessaging;
+package com.example.groupMessaging.interfaces;
 
 public interface MessageListener {
     /**

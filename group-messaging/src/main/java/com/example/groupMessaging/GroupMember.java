@@ -1,5 +1,7 @@
 package com.example.groupMessaging;
 
+import com.example.groupMessaging.interfaces.MembershipListener;
+import com.example.groupMessaging.interfaces.MessageListener;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 
@@ -231,11 +233,7 @@ public class GroupMember implements Watcher {
             }
         });
 
-        Set<String> currentlyKnownMembers = knownMembers.get(groupId);
-        if (currentlyKnownMembers == null) {
-            currentlyKnownMembers = new HashSet<>();
-            knownMembers.put(groupId, currentlyKnownMembers);
-        }
+        Set<String> currentlyKnownMembers = knownMembers.computeIfAbsent(groupId, k -> new HashSet<>());
 
         // Find new members
         for (String member : members) {

@@ -1,5 +1,7 @@
 package com.example.groupMessaging;
 
+import com.example.groupMessaging.interfaces.MembershipListener;
+import com.example.groupMessaging.interfaces.MessageListener;
 import org.apache.zookeeper.KeeperException;
 
 import java.io.IOException;
