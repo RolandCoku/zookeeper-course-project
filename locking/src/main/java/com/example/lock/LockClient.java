@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * An improved example demonstrating the use of ZkDistributedLock
+ * An example demonstrating the use of ZkDistributedLock
  * to access a shared resource from multiple clients.
  */
 public class LockClient {
